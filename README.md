@@ -3,4 +3,4 @@ Implementation of methods for estimating the class prior in the positive-unlabel
 
 ## Contact
 
-Daniel Zeiberg - zeiberg.d@northeastern.ed
+Daniel Zeiberg - zeiberg.d@northeastern.edu
