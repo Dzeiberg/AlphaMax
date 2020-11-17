@@ -24,7 +24,7 @@ classdef Minkowski < DistanceMetric
         
         function dist = calc_distance(obj,x1,x2)
             %CALC_DISTANCE: Calculate the distance between two points
-            dist = norm(x1-x2,obj.order)^obj.order;
+            dist = norm(x1-x2,obj.order);
         end
     end
 end
