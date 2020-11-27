@@ -65,14 +65,15 @@ classdef SyntheticSampler < Sampler & handle
        function [] = updateIndexValues(obj)
            if obj.instance == obj.instancesPerSet
                obj.instance = 1;
+               obj.set = obj.set + 1;
+               
            else
                obj.instance = obj.instance + 1;
            end
-           if obj.set == obj.numParamSets
-               obj.set = 1;
-           else
-               obj.set = obj.set + 1;
-           end
+       end
+       
+       function [] = assignSetValue(obj,val)
+           obj.set = val;
        end
        
        function [len] = getLength(obj)
