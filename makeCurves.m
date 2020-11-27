@@ -59,7 +59,7 @@ function [curves] = makeCurves(sampler, constructorHandle, varargin)
            waitbar(sampleNum/len, f, strcat(num2str(sampleNum),'/',num2str(len), '   ---   average time: ',num2str(times/sampleNum))); 
            pause(0.00000001);
        else
-           warn(strcat(num2str(sampleNum),'/',num2str(len), '   ---   average time: ',num2str(times/sampleNum)));
+           warning(strcat(num2str(sampleNum),'/',num2str(len), '   ---   average time: ',num2str(times/sampleNum)));
        end
     end
     if ~ p.Results.quiet
