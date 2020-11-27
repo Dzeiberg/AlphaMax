@@ -45,15 +45,16 @@ params = struct('a0',zeros(n,1),'a1',zeros(n,1),'b0',zeros(n,1),...
                 'componentSizes', zeros(n, p.Results.samplesPerParameterSet),...
                 'bin', zeros(n,1));
 remainingPairs = p.Results.pairsPerBin;
-mybar = waitbar(0,'starting');
-pause(0.00001)
+figure
 while any(remainingPairs > 0)
    [distance, a0, a1, b0, b1] = sampler();
    binIndex = find(p.Results.binEdges < distance, 1, 'last');
    if remainingPairs(binIndex) > 0
        remainingPairs(binIndex) = remainingPairs(binIndex) - 1;
        frac= sum((p.Results.pairsPerBin - remainingPairs) / p.Results.pairsPerBin);
-       waitbar(frac, mybar,num2str(remainingPairs))
+       % waitbar(frac, mybar,num2str(remainingPairs))
+       bar(p.Results.binEdges,remainingPairs,1,'b');
+       ylim([0,max(p.Results.pairsPerBin)])
        pause(.0000001)
        parametersAdded = parametersAdded + 1;
        params.a0(parametersAdded,:) = a0;
@@ -67,8 +68,8 @@ while any(remainingPairs > 0)
        params.componentSizes(parametersAdded,:) = ...
            p.Results.componentSizeSampler(p.Results.samplesPerParameterSet);
        params.bin(parametersAdded) = binIndex;
+       drawnow;
    end
 end
-close(mybar)
 end
 
