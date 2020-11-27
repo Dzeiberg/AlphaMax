@@ -1,14 +1,14 @@
 classdef DistanceTable
     %DISTANCETABLE Store the distance between pairs of points from the
-    %component sample and mixture sample
+    %component sample and mixture sample, and calculates the nearest
+    %neighbor between a component sample and a subset of mixture points
 
     properties
-        distance_metric
-        table
+        distances
     end
     
     methods
-        function obj = DistanceTable(numComponentSamples, numMixtureSamples,distance_metric)
+        function obj = DistanceTable(componentSamples, mixtureSamples,distance_metric)
             %DISTANCETABLE Construct an instance of this class
             % Manages the storage and calculation of distances between
             % pairs of component and mixture points. Improves speed by
@@ -17,65 +17,30 @@ classdef DistanceTable
             % numMixtureSamples,distance_metric);
             %
             % Required Arguments:
-            %   numComponentSamples - int - number of instances in the
-            %                               component sample
+            % componentSamples - (nP x dim) double - component samples
             %
-            %   numMixtureSamples - int - number of instances in the
-            %                               mixture sample
+            %   mixtureSamples - (nU x dim) double - mixture samples
             %
             %   distance_metric- Subclass of DistanceMetric- Distance metric object
             %   to use in nearest neighbor calculations
             %
-            obj.table = ones(numComponentSamples, numMixtureSamples) * -1;
-            obj.distance_metric = distance_metric;
+            obj.distances = pdist2(componentSamples, mixtureSamples, distance_metric);
         end
         
-        function dist = getDistance(obj,componentSample, componentIndex, mixtureSample, mixtureIndex)
-            %GETDISTANCE get the distance between a pair of component and
-            %mixture samples, adding the result to the table if it hasn't
-            %yet been computed
+        function [smallestDist, index] = getNearestNeighbor(obj, componentIndex, mixtureIndices)
+            % GETNEARESTNEIGHBOR Given the index of a compoenent sample of
+            % interest and a subset of mixture indices, return the index of
+            % the nearest mixture point and the corresponding distance
             %
-            % Syntax: [dist] = obj.getDistance(componentSample, componentIndex, mixtureSample, mixtureIndex);
+            % Required Arguments
+            % componentIndex - int - index of the component sample of
+            % interest
             %
-            % Required Arguments:
-            %   componentSample - (1 x dim) double - instance from the component sample
-            %   componentIndex - int - index of the instance within the component sample
-            %   mixtureSample - (1 x dim) double - instance from the mixture sample
-            %   componentIndex - int - index of the instance within the mixture sample
-            % 
-            % Outputs
-            %   dist - double - distance between the given pair of points
-            if obj.table(componentIndex, mixtureIndex) ~= -1
-                dist = obj.table(componentIndex, mixtureIndex);
-            else
-                dist = obj.distance_metric.calc_distance(componentSample, mixtureSample);
-                obj.table(componentIndex, mixtureIndex) = dist;
-            end
-        end
-        
-        function [smalledDist,closestMixtureInstance] = getNearestNeighbor(obj, componentInstance, componentIndex, mixtureSamples, mixtureIndices)
-            %GETNEARESTNEIGHBOR for a instance from the component sample
-            %and a subset of the mixture sample, find the instance in the
-            %mixture subset that is closest to the component instance,
-            %returning that distance and the index for that nearest mixture
-            %instance
-            %
-            % Required Arguments:
-            %   componentInstance - (1 x dim) double - instance from the component sample
-            %   componentIndex - int - index of the instance within the component sample
-            %   mixtureSamples - (nU x dim) double - subset of the mixture sample
-            %   componentIndex - int - indices of the subset within the mixture sample
-            %
-            % Output
-            %   smallestDist - double - the distance between the given component instance and the closest instance from the mixture subset
-            %   closestMixtureInstance - int - the index of the nearest mixture instance
-            numMixtureSamples = size(mixtureSamples,1);
-            distances = zeros(numMixtureSamples, 1);
-            for i = 1:numMixtureSamples
-               distances(i) = obj.getDistance(componentInstance, componentIndex, mixtureSamples(i), mixtureIndices(i)); 
-            end
-            [smalledDist, indexInMixtureSubset] = min(distances);
-            closestMixtureInstance = mixtureIndices(indexInMixtureSubset);
+            % mixtureIndices - (n x 1) int - indices of the mixture points
+            % you would like to consider when finding the nearest neighbor
+            dists = obj.distances(componentIndex,:);
+            [smallestDist, minDIdx] = min(dists(mixtureIndices));
+            index = mixtureIndices(minDIdx);
         end
     end
 end
