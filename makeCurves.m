@@ -8,9 +8,11 @@ function [curves] = makeCurves(sampler, constructorHandle, varargin)
     %   'argname1',argValue1, ...)
     %
     % Optional Arguments
-    %   - setNumber - int - focus on just one parameter set (10 instances) rather than all
-    %                       1M instances; if not set, process all 1M
-    %                       instances
+    %   - setNumberStart - int - first parameter set (10 instances) to process;
+    %            if specified along with setNumberEnd, [setNumberStart, setNumberEnd] parameter sets will be processed;
+    %            if setNumberEnd not specified, only setNumberStart,
+    %            will be processed;
+    %            if not set, process all 1M instances
     %   - quiet     - bool - whether to turn off the progress bar
     %
     %   - savePath - None - if specified, save the curves to the specified
@@ -29,16 +31,21 @@ function [curves] = makeCurves(sampler, constructorHandle, varargin)
         end
     end
     p= inputParser;
-    addOptional(p,'setNumber', 0);
+    addOptional(p,'setNumberStart', 0);
+    addOptional(p,'setNumberEnd', 0);
     addOptional(p,'quiet', false);
     addOptional(p,'savePath','')
     parse(p,varargin{:});
-    setNum = p.Results.setNumber;
-    if setNum == 0
+    setNumStart = p.Results.setNumberStart;
+    setNumEnd = p.Results.setNumberEnd;
+    if setNumStart == 0
        len = sampler.getLength();
     else
        len = sampler.instancesPerSet;
-       sampler.assignSetValue(setNum);
+       if setNumEnd ~= 0
+           len = len * (setNumEnd - setNumStart + 1);
+       end
+       sampler.assignSetValue(setNumStart);
     end
     % Create dummy instance of constructor to determine curve length
     curveLength = size(constructorHandle(zeros(1,1),zeros(1,1)).percentiles, 2);
