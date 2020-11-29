@@ -87,7 +87,7 @@ classdef CurveConstructor
             'hamming'; 'jaccard'; 'squaredeuclidean'};
            warn = @()warning(strcat('for best performance distanceMetric should be one of {',strjoin(pdistCompatible,','),'}'));
            badDist = @()error(strcat("distanceMetric must be a subclass of DistanceMetric or one of: ",strjoin(pdistCompatible,', '), ', yang1, yang2'));
-           obj.useGPU = true;
+           obj.useGPU = p.Results.useGPU;
            if isSubclass(p.Results.distanceMetric)
                distanceMetric = p.Results.distanceMetric;
                warn();
