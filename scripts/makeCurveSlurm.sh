@@ -1,16 +1,17 @@
 #!/bin/bash
-#SBATCH --partition=debug
+#SBATCH --partition=short
+#SBATCH --cpus-per-task=10
 #SBATCH --job-name=alphamax                    # sets the job name
 #SBATCH --mem=32Gb                               # reserves 32 GB memory
-#SBATCH --time=00:19:00                            # reserves machines/cores for 17 hours.
+#SBATCH --time=23:59:00                            # reserves machines/cores for ~24 hours.
 #SBATCH --output=logs/makeCurves.%A_%a.out               # sets the standard output to be stored in file my_nice_job.%j.out, where %j is the job id)
 #SBATCH --error=logs/makeCurves.%A_%a.err                # sets the standard error to be stored in file my_nice_job.%j.err, where %j is the job id)
 #SBATCH --constraint=E5-2690v3@2.60GHz          # only consider reserving the machines that has Intel E5-2690v3 chip)
-#SBATCH --array=1-2 # job array index
+#SBATCH --array=1-1000 # job array index
 
 module load matlab/R2020a
-SetsPerJob=1;
-TotalSets=2;
+SetsPerJob=100;
+TotalSets=100000;
 cd /home/zeiberg.d/alphamax
 let "TotalJobs=$TotalSets/$SetsPerJob"
 for ((i=1; i <=$TotalJobs; i++))
