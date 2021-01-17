@@ -139,7 +139,7 @@ classdef CurveConstructor
            if obj.useGPU
             curves = gpuArray(curves);
            end
-           parfor (i = 1:obj.numCurvesToAverage, obj.numCurvesToAverage)
+           parfor (i = 1:obj.numCurvesToAverage, 5)
               curves(i,:) = obj.makeSingleCurve(); 
            end
            averages = mean(curves,1);
