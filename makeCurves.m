@@ -24,7 +24,7 @@ function [curves] = makeCurves(sampler, constructorHandle, varargin)
     addpath('syntheticDataGeneration');
     addpath('distcurve');
     if ~ismember('Sampler',superclasses(sampler))
-        if ischar(sampler) && isfile(sampler)
+        if isstring(sampler) && isfile(sampler)
             sampler = SyntheticSampler(sampler);
         else
             error('sampler must either be an instance of a subclass of Sampler or a path to a .mat file containing parameters for SyntheticSampler');
@@ -36,6 +36,7 @@ function [curves] = makeCurves(sampler, constructorHandle, varargin)
     addOptional(p,'quiet', false);
     addOptional(p,'savePath','')
     parse(p,varargin{:});
+    disp(strcat('saving to ',p.Results.savePath));
     setNumStart = p.Results.setNumberStart;
     setNumEnd = p.Results.setNumberEnd;
     if setNumStart == 0
