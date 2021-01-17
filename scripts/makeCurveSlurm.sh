@@ -10,7 +10,7 @@
 #SBATCH --array=1-1000 # job array index
 
 module load matlab/R2020a
-SetsPerJob=100;
+SetsPerJob=2;
 TotalSets=100000;
 cd /home/zeiberg.d/alphamax
 let "TotalJobs=$TotalSets/$SetsPerJob"
