@@ -2,3 +2,4 @@ distcurve/estimator/net.mat
 logs/
 data/
 *.m~
+*.asv

@@ -1,18 +1,19 @@
-function [curves] = makeCurves(sampler, constructorHandle, varargin)
-    % For each instance in sampler, make the distance curve
+function [curves] = makeCurves(sampler, varargin)
+    %% For each instance in sampler, make the distance curve
     % Required Arguments:
-    %   - sampler : instance of a subclass of Sampler
-    %   - constructorHandle : a handle to CurveConstructor with all
-    %   optional arguments assigned: @(componentSamples,mixtureSamples)=
-    %   CurveConstructor(componentSamples, mixtureSamples,
-    %   'argname1',argValue1, ...)
+    %   - sampler : either:
+    %                   - struct with fields xPos, xUnlabeled
+    %                        (see ../FileSampler)
+    %                   - instance of a subclass of Sampler
     %
     % Optional Arguments
-    %   - setNumberStart - int - first parameter set (10 instances) to process;
-    %            if specified along with setNumberEnd, [setNumberStart, setNumberEnd] parameter sets will be processed;
-    %            if setNumberEnd not specified, only setNumberStart,
-    %            will be processed;
-    %            if not set, process all 1M instances
+    %   - constructorHandle : a handle to CurveConstructor constructor
+    %                       function with all optional arguments assigned:
+    %
+    % default:
+    % @(componentSamples,mixtureSamples)=CurveConstructor(componentSamples,
+    %                                                     mixtureSamples)
+    %
     %   - quiet     - bool - whether to turn off the progress bar
     %
     %   - savePath - None - if specified, save the curves to the specified
@@ -21,36 +22,35 @@ function [curves] = makeCurves(sampler, constructorHandle, varargin)
     %   curves : double (sampler.getLength() x
     %   size(constructorHandle.percentiles, 1) : distance curves for each
     %   instance in the sampler
-    addpath('syntheticDataGeneration');
-    addpath('distcurve');
+    %% Process Arguments and Initialize
+    addpath('../')
+    addpath('../syntheticDataGeneration');
     if ~ismember('Sampler',superclasses(sampler))
         if isstring(sampler) && isfile(sampler)
             sampler = SyntheticSampler(sampler);
+        elseif isstruct(sampler) && isfield(sampler,'xPos') && isfield(sampler,'xUnlabeled')
+            sampler = FileSampler(sampler);
         else
             error('sampler must either be an instance of a subclass of Sampler or a path to a .mat file containing parameters for SyntheticSampler');
         end
     end
     p= inputParser;
-    addOptional(p,'setNumberStart', 0);
-    addOptional(p,'setNumberEnd', 0);
+    defaultConstructor= @(componentSamples,mixtureSamples) ...
+        CurveConstructor(componentSamples,mixtureSamples);
+    % Optional Arguments
+    addOptional(p,'constructorHandle',defaultConstructor);
     addOptional(p,'quiet', false);
     addOptional(p,'savePath','')
     parse(p,varargin{:});
-    disp(strcat('saving to ',p.Results.savePath));
-    setNumStart = p.Results.setNumberStart;
-    setNumEnd = p.Results.setNumberEnd;
-    if setNumStart == 0
-       len = sampler.getLength();
-    else
-       len = sampler.instancesPerSet;
-       if setNumEnd ~= 0
-           len = len * (setNumEnd - setNumStart + 1);
-       end
-       sampler.assignSetValue(setNumStart);
+    if ~strcmp(p.Results.savePath,'')
+        disp(strcat('saving to ',p.Results.savePath));
     end
+    len = sampler.getLength();
     % Create dummy instance of constructor to determine curve length
+    constructorHandle = p.Results.constructorHandle;
     curveLength = size(constructorHandle(zeros(1,1),zeros(1,1)).percentiles, 2);
     curves = zeros(len, curveLength);
+    %% Make Curves
     times = 0;
     if ~ p.Results.quiet
        f = waitbar(0,strcat('0/',num2str(len), '   ---   average time: ',num2str(times/1)));

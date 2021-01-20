@@ -15,12 +15,12 @@ classdef CurveConstructor
            %                     prior as described in
            % Zeiberg et al. (2020) https://doi.org/10.1609/aaai.v34i29.6151
            %
-           % Syntax: [curve] = makeDistanceCurve(positiveSamples, unlabeledSamples)
            %
            % Required Arguments:
            %   componentSamples - (nP x dim) double - component samples
            %
            %   mixtureSamples - (nU x dim) double - mixture samples
+           %
            % Optional Arguments:
            %   numCurvesToAverage - int - default: 10 - number of times to repeat 
            %                                            curve construction after which
@@ -29,9 +29,9 @@ classdef CurveConstructor
            %   distanceMetric - {'euclidean'; 'seuclidean'; 'cityblock'; 'chebychev';
            %                     'mahalanobis'; 'minkowski'; 'cosine'; 'correlation'; ...
            %                     'hamming'; 'jaccard'; 'squaredeuclidean'} or 
-           %                     Subclass of distanceMetrics/DistanceMetric - default:
-           %                     manhattan - distance metric to use when calculating
-           %                     the nearest neighbor
+           %                     instance of subclass of distanceMetrics/DistanceMetric;...
+           %                    - default:manhattan - distance metric to
+           %                    use when calculatingthe nearest neighbor
            %                     NOTE: for best performance, use one of the
            %                     strings in the list, as these are
            %                     compatible with the pdist2 gpuArray
