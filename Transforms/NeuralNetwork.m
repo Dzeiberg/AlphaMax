@@ -5,40 +5,42 @@ classdef NeuralNetwork < Transform
     properties
         args
         net
+        
     end
     
     methods
         function obj = NeuralNetwork(varargin)
             %NEURALNETWORK : MLP for predicting p/u label
             args= inputParser;
-            addOptional(args,'num_bagged_models', 100);
             addOptional(args,'hidden_layer_sizes', [5,5]);
             parse(args,varargin{:});
             obj.args = args.Results;
-            obj.constructNetwork();
+            obj.net = obj.constructNetwork();
         end
         
-        function [] = constructNetwork(obj)
-            obj.net = feedforwardnet(obj.hidden_layer_sizes,'trainrp');
-            for l = 1:length(obj.args.hidden_layer_sizes)
-                obj.net.layers{l}.transferFcn = 'tansig';
-            end
-            obj.net.trainParam.epochs = 500;
-            obj.net.trainParam.show = NaN;
-            obj.net.trainParam.showWindow = false;
-            obj.net.trainParam.max_fail = 25;
-            obj.net.divideFcn = 'divideind';
+        function [net] = constructNetwork(obj)
+            net = patternnet(obj.args.hidden_layer_sizes);
+%             net = feedforwardnet(obj.args.hidden_layer_sizes,'trainrp');
+%             for l = 1:length(obj.args.hidden_layer_sizes)
+%                 net.layers{l}.transferFcn = 'tansig';
+%             end
+            net.trainParam.epochs = 500;
+            net.trainParam.show = NaN;
+            net.trainParam.showWindow = false;
+            net.trainParam.max_fail = 25;
+            net.divideFcn = 'divideind';
+              
 
         end
-        function [] = train(obj,x,s, train_indices, val_indices)
+        function [net] = ttrain(obj,x,s, train_indices, val_indices)
             obj.net.divideParam.trainInd = train_indices;
             obj.net.divideParam.valInd = val_indices;
             obj.net.divideParam.testInd = [];
-            obj.net = train(obj.net, x, s);
+            net = train(obj.net, x', s');
         end
         
-        function [preds] = predict(x)
-            preds = predict(obj.net,x);
+        function [preds] = tpredict(obj,x)
+            preds = obj.net(x');%predict(obj.net,x);
         end
     end
 end

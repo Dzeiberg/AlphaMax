@@ -12,18 +12,25 @@ function [ensemble_prediction, aucPU] = bagging(X,S,modelfactory,varargin)
     % Optional Arguments
     %   - val_frac : double in [0,1] : fraction of training data to use for
     %              validation
+    addpath("utilities");
     args= inputParser;
-    addRequired(args,'modelfactory',@(x) superclasses(x(),"Transform"));
+    function [res] = isvalidTransform(t)
+        m = t();
+        res = strcmp(superclasses(m),"Transform");
+    end
+    assert(isvalidTransform(modelfactory));
     addOptional(args,'val_frac',.25, @(x) x >= 0 && x <= 1);
-    parse(args,modelfactory,varargin{:});
+    addOptional(args,'num_bagged_models', 100);
+    parse(args,varargin{:});
     % Accumulate Predictions across all the bags for each point
     preds = zeros(size(X,1),1);
     numPreds = zeros(size(X,1),1);
     for baggingNum = 1 : args.Results.num_bagged_models
         [inBagData, inBagLabels, trainIndices, valIndices, outOfBagData, outOfBagIndices] = getBaggingData(X, S,args.Results.val_frac);
-        model = args.Results.modelfactory();
-        model.train(inBagData, inBagLabels, trainIndices, valIndices);
-        [outOfBagPreds] = model.predict(outOfBagData);
+        model = modelfactory();
+        trainedModel = model.ttrain(inBagData, inBagLabels, trainIndices, valIndices);
+        model.net = trainedModel;
+        [outOfBagPreds] = model.tpredict(outOfBagData);
         for i = 1:length(outOfBagIndices)
             idx= outOfBagIndices(i);
             preds(idx) = preds(idx) + outOfBagPreds(i);
@@ -38,6 +45,6 @@ function [ensemble_prediction, aucPU] = bagging(X,S,modelfactory,varargin)
             numPreds(i) = 1;
         end
     end
-    ensemble_prediction = (preds / numPreds) > 0.5;
-    aucPU = get_auc_ultra(ensembl_predictions, S);
+    ensemble_prediction = (preds ./ numPreds);
+    aucPU = get_auc_ultra(ensemble_prediction, S);
 end

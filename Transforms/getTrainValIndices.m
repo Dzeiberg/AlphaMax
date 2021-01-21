@@ -4,7 +4,7 @@ function [trainIndices, valIndices] = getTrainValIndices(indices, val_frac)
     % equal to val_frac
 
     % create a map of unique index to the locations in the indices list 
-    indexToCount = containers.Map('KeyType','int32','ValType','int32');
+    indexToCount = containers.Map('KeyType','int32','ValueType','int32');
     for loc = 1:length(indices)
         idx = indices(loc);
         if isKey(indexToCount,idx)
@@ -13,7 +13,7 @@ function [trainIndices, valIndices] = getTrainValIndices(indices, val_frac)
             indexToCount(idx) = 1;
         end
     end
-    uniqueIndices = cell2mat(m.keys())';
+    uniqueIndices = cell2mat(indexToCount.keys())';
     uniqueIndices = uniqueIndices(randperm(length(uniqueIndices)));
     split = ceil(length(indices) * val_frac);
     trainUnique = uniqueIndices(1:split);
@@ -22,11 +22,14 @@ function [trainIndices, valIndices] = getTrainValIndices(indices, val_frac)
     valIndices = [];
     for i = 1:length(trainUnique)
         idx = trainUnique(i);
-        trainIndices = [trainIndices, ones(1,indexToCount(idx)) * idx];
+        itoc = indexToCount(idx);
+        assert(isa(idx,'int32'));
+        idxs = ones(1,itoc,'int32') * idx;
+        trainIndices = [trainIndices, idxs];
     end
     for i = 1:length(valUnique)
         idx = valUnique(i);
-        valIndices= [valIndices, ones(1,indexToCount(idx)) * idx];
+        valIndices= [valIndices, ones(1,indexToCount(idx),'int32') * idx];
     end
 end
 

@@ -3,7 +3,7 @@ classdef (Abstract) Transform
     %transform
     
     methods (Abstract)
-        train(x,s)
-        predict(x)
+        ttrain(x,s)
+        tpredict(x)
     end
 end

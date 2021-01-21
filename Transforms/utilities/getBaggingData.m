@@ -14,5 +14,5 @@ function [inBagData, inBagLabels, finalTrainIndices, finalValIndices, outOfBagDa
     % Merge train and val data and recalculate train/val indices
     inBagData = [trainData;valData];
     finalTrainIndices = 1:length(trainData);
-    finalValIndices = size(trainData, 1) + 1 : size(inBagData,1));
+    finalValIndices = size(trainData, 1) + 1 : size(inBagData,1);
 end
