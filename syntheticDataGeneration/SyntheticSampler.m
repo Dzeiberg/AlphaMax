@@ -53,7 +53,7 @@ classdef SyntheticSampler < Sampler & handle
            addOptional(p,'setNumberStart', 1);
            addOptional(p,'setNumberEnd', -1);
            parse(p,varargin{:});
-           obj.params = load(paramFilePath,"-mat",'params');
+           obj.params = load(paramFilePath);
            obj.params = obj.params.params;
            obj.numParamSets = size(obj.params.a0,1);
            obj.instancesPerSet = size(obj.params.alphas,2);
