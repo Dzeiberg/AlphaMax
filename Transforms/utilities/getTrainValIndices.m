@@ -15,7 +15,7 @@ function [trainIndices, valIndices] = getTrainValIndices(indices, val_frac)
     end
     uniqueIndices = cell2mat(indexToCount.keys())';
     uniqueIndices = uniqueIndices(randperm(length(uniqueIndices)));
-    split = ceil(length(indices) * val_frac);
+    split = ceil(length(uniqueIndices) * (1 - val_frac));
     trainUnique = uniqueIndices(1:split);
     valUnique = uniqueIndices(split+1:end);
     trainIndices = [];

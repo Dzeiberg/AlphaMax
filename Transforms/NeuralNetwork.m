@@ -29,13 +29,16 @@ classdef NeuralNetwork < Transform
 
         end
         function [model] = ttrain(obj,x,s, train_indices, val_indices)
+            % Return a trained neural network
             obj.model.divideParam.trainInd = train_indices;
             obj.model.divideParam.valInd = val_indices;
             obj.model.divideParam.testInd = [];
-            model= train(obj.net, x', s');
+            model= train(obj.model, x', s');
         end
         
         function [preds] = tpredict(obj,x)
+            % return the probability that each point came from the positive
+            % (v. unlabeled) set
             preds = obj.model(x');
         end
     end
