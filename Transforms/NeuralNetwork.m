@@ -4,7 +4,7 @@ classdef NeuralNetwork < Transform
     
     properties
         args
-        net
+        model
         
     end
     
@@ -15,15 +15,11 @@ classdef NeuralNetwork < Transform
             addOptional(args,'hidden_layer_sizes', [5,5]);
             parse(args,varargin{:});
             obj.args = args.Results;
-            obj.net = obj.constructNetwork();
+            obj.model = obj.constructNetwork();
         end
         
         function [net] = constructNetwork(obj)
             net = patternnet(obj.args.hidden_layer_sizes);
-%             net = feedforwardnet(obj.args.hidden_layer_sizes,'trainrp');
-%             for l = 1:length(obj.args.hidden_layer_sizes)
-%                 net.layers{l}.transferFcn = 'tansig';
-%             end
             net.trainParam.epochs = 500;
             net.trainParam.show = NaN;
             net.trainParam.showWindow = false;
@@ -32,15 +28,15 @@ classdef NeuralNetwork < Transform
               
 
         end
-        function [net] = ttrain(obj,x,s, train_indices, val_indices)
-            obj.net.divideParam.trainInd = train_indices;
-            obj.net.divideParam.valInd = val_indices;
-            obj.net.divideParam.testInd = [];
-            net = train(obj.net, x', s');
+        function [model] = ttrain(obj,x,s, train_indices, val_indices)
+            obj.model.divideParam.trainInd = train_indices;
+            obj.model.divideParam.valInd = val_indices;
+            obj.model.divideParam.testInd = [];
+            model= train(obj.net, x', s');
         end
         
         function [preds] = tpredict(obj,x)
-            preds = obj.net(x');%predict(obj.net,x);
+            preds = obj.model(x');
         end
     end
 end

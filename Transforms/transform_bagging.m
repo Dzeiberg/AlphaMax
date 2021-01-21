@@ -1,4 +1,4 @@
-function [ensemble_prediction, aucPU] = bagging(X,S,modelfactory,varargin)
+function [ensemble_prediction, aucPU] = transform_bagging(X,S,modelfactory,varargin)
     % BAGGING : make out-of-bag predictions on all instances in X0 and X1
     % Required Arguments
     %   - X : n x d double : matrix of d-dimensional features for n
@@ -8,10 +8,20 @@ function [ensemble_prediction, aucPU] = bagging(X,S,modelfactory,varargin)
     %
     %   - modelfactory : function handle returning an instance of a
     %                  subclass of Tranform
+    %         examples:
+    %               - @()NeuralNetwork('hidden_layer_sizes',[32,32]);
+    %               - @()RegressionTree('
+                            
     %
     % Optional Arguments
     %   - val_frac : double in [0,1] : fraction of training data to use for
     %              validation
+    %
+    % Return Values
+    %
+    %   - ensemble_predictions : n x 1 double : probability each instance 
+    %                            from positive (v. unlabeled) class
+    %   - aucPU : double : Positive/Unlabeled AUC of the transform
     addpath("utilities");
     args= inputParser;
     function [res] = isvalidTransform(t)
@@ -29,7 +39,7 @@ function [ensemble_prediction, aucPU] = bagging(X,S,modelfactory,varargin)
         [inBagData, inBagLabels, trainIndices, valIndices, outOfBagData, outOfBagIndices] = getBaggingData(X, S,args.Results.val_frac);
         model = modelfactory();
         trainedModel = model.ttrain(inBagData, inBagLabels, trainIndices, valIndices);
-        model.net = trainedModel;
+        model.model = trainedModel;
         [outOfBagPreds] = model.tpredict(outOfBagData);
         for i = 1:length(outOfBagIndices)
             idx= outOfBagIndices(i);
