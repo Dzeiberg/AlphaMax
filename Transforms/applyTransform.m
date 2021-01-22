@@ -7,7 +7,8 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
     %                                               svm: SVM,
     %                                               none: no transform,
     %                                               optimal: apply all
-    %               transforms then choose one with the highest AUCPU}
+    %               transforms using the parameters described in
+    %               (Zeiberg 2020) then choose one with the highest AUCPU}
     
     % For all other optional arguments, see relevant file
     addpath("utilities");
@@ -78,7 +79,7 @@ end
 function [res] = doNN(X,S,hidden_layer_sizes)
     mf = @()NeuralNetwork('hidden_layer_sizes',hidden_layer_sizes);
     [res.preds,res.aucPU] = transform_bagging(X,S,mf,...
-           'val_frac',0.20,...
+           'val_frac',.25,...
            'num_bagged_models',100);
 end
 
