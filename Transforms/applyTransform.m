@@ -4,7 +4,8 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
     % Optional Arguments:
     %   - transform : type of transform to apply : {rt: RegressionTree,
     %                                               nn: NeuralNetwork,
-    %                                               svm: SVM}
+    %                                               svm: SVM,
+    %                                               none: no transform}
     % For all other optional arguments, see relevant file
     addpath("utilities");
     args= inputParser;
@@ -36,8 +37,11 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
         [preds,aucPU] = transform_svm(X,S,'polynomialOrder',args.polynomialOrder,...
             'kfoldvalue',args.kfoldvalue,...
             'applyPlattCorrection',args.applyPlattCorrection);
+    elseif strcmp(args.transform, 'none')
+        aucPU = get_auc_ultra(X,S);
+        preds = X;
     else
-        error("Invalid transform, must be one of: {nn,rt,svm}");
+        error("Invalid transform, must be one of: {nn,rt,svm,none}");
     end
 end
 
