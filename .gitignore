@@ -1,4 +1,5 @@
-distcurve/estimator/net.mat
+
+distcurve/estimator/bignetwork.mat
 logs/
 data/
 *.m~

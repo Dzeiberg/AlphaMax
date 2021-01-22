@@ -53,7 +53,7 @@ function [curves] = makeCurves(sampler, varargin)
     %% Make Curves
     times = 0;
     if ~ p.Results.quiet
-       f = waitbar(0,strcat('0/',num2str(len), '   ---   average time: ',num2str(times/1)));
+       f = waitbar(0,strcat('making distance curves: ','0/',num2str(len), '   ---   average time: ',num2str(times/1)));
        pause(0.00000001);
     end
     for sampleNum = 1:len
@@ -64,10 +64,10 @@ function [curves] = makeCurves(sampler, varargin)
        elapsedTime = toc;
        times = times + elapsedTime;
        if ~ p.Results.quiet
-           waitbar(sampleNum/len, f, strcat(num2str(sampleNum),'/',num2str(len), '   ---   average time: ',num2str(times/sampleNum))); 
+           waitbar(sampleNum/len, f, strcat('making distance curves: ',num2str(sampleNum),'/',num2str(len), '   ---   average time: ',num2str(times/sampleNum))); 
            pause(0.00000001);
        else
-           warning(strcat(num2str(sampleNum),'/',num2str(len), '   ---   average time: ',num2str(times/sampleNum)));
+           warning(strcat('making distance curves: ',num2str(sampleNum),'/',num2str(len), '   ---   average time: ',num2str(times/sampleNum)));
        end
     end
     if ~ p.Results.quiet

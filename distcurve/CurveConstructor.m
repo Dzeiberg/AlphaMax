@@ -42,6 +42,10 @@ classdef CurveConstructor
            %                       after averaging across all curves, final
            %                       distance curve will be these percentiles
            %                       values of the averages
+           %                 Warning : modifying this argument will result
+           %                 in a distance curve that is likely
+           %                 incompatible with the pre-trained class prior
+           %                 estimator used in estimator/getEstimate.m 
            %
            %   useGPU - bool - default false - whether do do computation on
            %   GPU; requires cuda compatible gpu and the matlab cuda
