@@ -88,6 +88,7 @@ classdef LLCurve < handle
                 end
             end
             fs=eval(strcat('obj.',obj.ll_str));
+            fs = obj.llCurve_correction(obj.alphas,fs);
             out.objs=obj.objs;
             out.betas=obj.betas;
             out.iters=obj.iters;
@@ -216,6 +217,14 @@ classdef LLCurve < handle
 
         function h0_val=h0(obj,xx, beta)
             h0_val=obj.hh1(xx,1-beta);
+        end
+        
+        function fs = llCurve_correction(~,alphas,fs)
+            %Corrects the log likelihood curve by enforcing it to be non increasing
+            for i=1:length(fs)
+                ai=alphas<alphas(i);
+                fs(ai)=max(fs(ai),fs(i));
+            end
         end
     end
 end
