@@ -67,7 +67,8 @@ classdef SyntheticSampler < Sampler & handle
            obj.len = obj.instancesPerSet * (setNumEnd - setNumStart + 1);
        end
        
-       function [positiveSample, mixtureSample] = getSample(obj)
+       function [positiveSample, mixtureSample, alpha] = getSample(obj)
+           alpha = obj.params.alphas(obj.set, obj.instance);
            positiveSample = betarnd(obj.params.a1(obj.set),...
                                     obj.params.b1(obj.set),...
                                     [int64(obj.params.componentSizes(obj.set, obj.instance)),1]);
