@@ -5,8 +5,10 @@ function [alphaHat, out] = runAlphaMax(x,x1,varargin)
 %   - x1 : component sample : n x d
 %
 % Optional Arguments:
-%   See the files noted below for details on the optional arguments
-% addpath("estimators/","../Transforms");
+%    - useEstimatorNet : default true : use the estimator net rather than
+%    the inflection script to estimate the class prior from the ll curve
+%
+%   See the files noted below for details on the other optional arguments
 addpath(fullfile(fileparts(mfilename('fullpath')),"../Transforms"));
 addpath(fullfile(fileparts(mfilename('fullpath')),"estimators/"));
 addpath(fullfile(fileparts(mfilename('fullpath')),"Algorithms/"));
@@ -31,6 +33,8 @@ addOptional(args,'quiet', false);
 addOptional(args,'savePath','')
 % estimator/getEstimate.m argument
 addOptional(args,'estimator',"./alphamax/estimators/alphamaxEstimator.mat");
+% choose which estimator to use
+addOptional(args,'useEstimatorNet',true);
 %% Parse Arguments
 parse(args,varargin{:});
 args = args.Results;
@@ -53,5 +57,9 @@ llcomputer = LLCurve(xUnlabeled, xPos);
 [out.curveAlphas, out.fs, out.compute_llCurve_output] = llcomputer.compute_llCurve();
 out.aucPU = aucPU;
 %% Get Class Prior Estimate using estimator network
-[alphaHat] = getAlphaMaxEstimate(out.fs,'estimator',args.estimator);
+if args.useEstimatorNet
+    [alphaHat] = getAlphaMaxEstimate(out.fs,'estimator',args.estimator);
+else
+    [alphaHat, out.inflectionScriptOutput] = inflectionScript(out.curveAlphas, -out.fs);
+end
 end
