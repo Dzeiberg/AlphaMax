@@ -1,4 +1,5 @@
 function [mixDens, comp1Dens] = densEst_hist(mixSample,comp1Sample,~)
+addpath(fullfile(fileparts(mfilename('fullpath')),"../distributions/"));
 %Estimates the density of x and x1 using finite gaussian mixtures. The
 %number of components is selected using AIC. The components obtained for x1
 %are resused to fit x.
