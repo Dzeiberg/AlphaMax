@@ -1,4 +1,4 @@
-function [alphaHat, curve, aucPU] = getDistCurveEstimate(x,x1,varargin)
+function [alphaHat, curve, aucPU] = runDistCurve(x,x1,varargin)
 %ESTIMATE Estimate the class prior using DistCurve (Zeiberg 2020)
 % Required Arguments
 %   - x : mixture sample : m x d
@@ -54,6 +54,6 @@ curve = makeCurves(makeCurveInput,...
     'savePath',args.savePath);
 curve = curve/sum(curve);
 %% Pass Curve to Class Prior Estimator Network
-alphaHat = getEstimate(curve,'estimator',args.estimator);
+alphaHat = getDistCurveEstimate(curve,'estimator',args.estimator);
 end
 
