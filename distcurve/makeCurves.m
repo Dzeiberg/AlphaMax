@@ -23,8 +23,8 @@ function [curves] = makeCurves(sampler, varargin)
     %   size(constructorHandle.percentiles, 1) : distance curves for each
     %   instance in the sampler
     %% Process Arguments and Initialize
-    addpath('../')
-    addpath('../syntheticDataGeneration');
+    addpath(fullfile(fileparts(mfilename('fullpath')),"../"));
+    addpath(fullfile(fileparts(mfilename('fullpath')),"../syntheticDataGeneration"));
     if ~ismember('Sampler',superclasses(sampler))
         if isstring(sampler) && isfile(sampler)
             sampler = SyntheticSampler(sampler);
