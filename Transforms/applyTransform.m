@@ -11,7 +11,7 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
     %               (Zeiberg 2020) then choose one with the highest AUCPU}
     
     % For all other optional arguments, see relevant file
-    addpath("utilities");
+    addpath(fullfile(fileparts(mfilename('fullpath')),"utilities"));
     args= inputParser;
     addOptional(args, 'transform','nn');
     % NeuralNetwork.m arguments

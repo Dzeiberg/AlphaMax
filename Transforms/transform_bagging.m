@@ -22,7 +22,8 @@ function [ensemble_prediction, aucPU] = transform_bagging(X,S,modelfactory,varar
     %   - ensemble_predictions : n x 1 double : probability each instance 
     %                            from positive (v. unlabeled) class
     %   - aucPU : double : Positive/Unlabeled AUC of the transform
-    addpath("utilities/");
+%     addpath("utilities/");
+    addpath(fullfile(fileparts(mfilename('fullpath')),"/utilities"))
     args= inputParser;
     function [res] = isvalidTransform(t)
         m = t();
