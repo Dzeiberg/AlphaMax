@@ -25,12 +25,6 @@ addOptional(args,'applyPlattCorrection',true)
 % transform_bagging.m arguments
 addOptional(args,'val_frac',.25, @(x) x >= 0 && x <= 1);
 addOptional(args,'num_bagged_models', 100);
-% makeCurves.m arguments
-defaultConstructor= @(componentSamples,mixtureSamples) ...
-        CurveConstructor(componentSamples,mixtureSamples);
-addOptional(args,'constructorHandle',defaultConstructor);
-addOptional(args,'quiet', false);
-addOptional(args,'savePath','')
 % estimator/getEstimate.m argument
 addOptional(args,'estimator',"./alphamax/estimators/alphamaxEstimator.mat");
 % choose which estimator to use
