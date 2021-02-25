@@ -3,7 +3,7 @@ function [curves] = makeCurves(sampler, varargin)
     % Required Arguments:
     %   - sampler : either:
     %                   - struct with fields xPos, xUnlabeled
-    %                        (see ../FileSampler)
+    %                        (see ../StructSampler)
     %                   - instance of a subclass of Sampler
     %
     % Optional Arguments
@@ -29,7 +29,7 @@ function [curves] = makeCurves(sampler, varargin)
         if isstring(sampler) && isfile(sampler)
             sampler = SyntheticSampler(sampler);
         elseif isstruct(sampler) && isfield(sampler,'xPos') && isfield(sampler,'xUnlabeled')
-            sampler = FileSampler(sampler);
+            sampler = StructSampler(sampler);
         else
             error('sampler must either be an instance of a subclass of Sampler or a path to a .mat file containing parameters for SyntheticSampler');
         end
@@ -58,7 +58,7 @@ function [curves] = makeCurves(sampler, varargin)
     end
     for sampleNum = 1:len
        tic;
-       [compSample,mixSample] = sampler.getSample();
+       [compSample,mixSample,~] = sampler.getSample();
        constructor = constructorHandle(compSample, mixSample);
        curves(sampleNum,:) = constructor.makeDistanceCurve();
        elapsedTime = toc;
