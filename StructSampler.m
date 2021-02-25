@@ -1,5 +1,5 @@
-classdef FileSampler < Sampler & handle
-    %FILESAMPLER sample (x,y) values from a .mat file 
+classdef StructSampler < Sampler & handle
+    %StructSampler sample (x,y) values from the struct given by the mat arg
     % Required Arguments:
     % - mat - struct with fields xPos, xUnlabeled
     %           xPos : n x d matrix of features for each positive instance
@@ -18,8 +18,8 @@ classdef FileSampler < Sampler & handle
     end
     
     methods
-        function obj = FileSampler(mat,varargin)
-            %FILESAMPLER Construct an instance of this class
+        function obj = StructSampler(mat,varargin)
+            %StructSampler Construct an instance of this class
             %   Detailed explanation goes here
             obj.mat = mat;
             [obj.n, obj.d] = size(mat.xPos);
@@ -31,7 +31,9 @@ classdef FileSampler < Sampler & handle
             
         end
         
-        function [xP,xU] = getSample(obj,~)
+        function [xP,xU,alpha] = getSample(obj,~)
+            % Return dummy for compatability
+            alpha = -1;
             if boolean(obj.nBootstraps)
                 xP = datasample(obj.mat.xPos,obj.n);
                 xU = datasample(obj.mat.xUnlabeled, obj.m);
