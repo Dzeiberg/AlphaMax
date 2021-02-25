@@ -15,12 +15,12 @@ classdef CurveConstructor
            %                     prior as described in
            % Zeiberg et al. (2020) https://doi.org/10.1609/aaai.v34i29.6151
            %
-           % Syntax: [curve] = makeDistanceCurve(positiveSamples, unlabeledSamples)
            %
            % Required Arguments:
            %   componentSamples - (nP x dim) double - component samples
            %
            %   mixtureSamples - (nU x dim) double - mixture samples
+           %
            % Optional Arguments:
            %   numCurvesToAverage - int - default: 10 - number of times to repeat 
            %                                            curve construction after which
@@ -29,9 +29,9 @@ classdef CurveConstructor
            %   distanceMetric - {'euclidean'; 'seuclidean'; 'cityblock'; 'chebychev';
            %                     'mahalanobis'; 'minkowski'; 'cosine'; 'correlation'; ...
            %                     'hamming'; 'jaccard'; 'squaredeuclidean'} or 
-           %                     Subclass of distanceMetrics/DistanceMetric - default:
-           %                     manhattan - distance metric to use when calculating
-           %                     the nearest neighbor
+           %                     instance of subclass of distanceMetrics/DistanceMetric;...
+           %                    - default:manhattan - distance metric to
+           %                    use when calculatingthe nearest neighbor
            %                     NOTE: for best performance, use one of the
            %                     strings in the list, as these are
            %                     compatible with the pdist2 gpuArray
@@ -42,6 +42,10 @@ classdef CurveConstructor
            %                       after averaging across all curves, final
            %                       distance curve will be these percentiles
            %                       values of the averages
+           %                 Warning : modifying this argument will result
+           %                 in a distance curve that is likely
+           %                 incompatible with the pre-trained class prior
+           %                 estimator used in estimator/getEstimate.m 
            %
            %   useGPU - bool - default false - whether do do computation on
            %   GPU; requires cuda compatible gpu and the matlab cuda
@@ -108,8 +112,8 @@ classdef CurveConstructor
            end
            obj.distanceTable = DistanceTable(obj.componentSamples, obj.mixtureSamples,distanceMetric);
            if obj.useGPU
-              obj.componentSamples = gpuArray(obj.componentSamples);
-            obj.mixtureSamples = gpuArray(obj.mixtureSamples); 
+               obj.componentSamples = gpuArray(obj.componentSamples);
+               obj.mixtureSamples = gpuArray(obj.mixtureSamples); 
            end
        end
        
@@ -139,11 +143,11 @@ classdef CurveConstructor
            if obj.useGPU
             curves = gpuArray(curves);
            end
-           parfor (i = 1:obj.numCurvesToAverage, obj.numCurvesToAverage)
+           parfor (i = 1:obj.numCurvesToAverage, 5)
               curves(i,:) = obj.makeSingleCurve(); 
            end
-           averages = mean(curves,1);
-           distanceCurve = prctile(averages,obj.percentiles);
+%            distanceCurve = prctile(mean(curves,1),obj.percentiles,2);
+           distanceCurve = mean(prctile(curves,obj.percentiles,2),1);
            if obj.useGPU
               distanceCurve = gather(distanceCurve); 
            end
