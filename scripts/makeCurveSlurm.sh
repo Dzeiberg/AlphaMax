@@ -10,15 +10,21 @@
 #SBATCH --array=1-1000 # job array index
 
 module load matlab/R2020a
-SetsPerJob=100;
-TotalSets=100000;
+SetsPerJob=10;
+TotalSets=1000000;
 cd /home/zeiberg.d/alphamax
 let "TotalJobs=$TotalSets/$SetsPerJob"
 for ((i=1; i <=$TotalJobs; i++))
 do 
 	let "Start=$SetsPerJob*($i-1)+1";
 	let "End=$i*$SetsPerJob";
-    srun matlab -nodisplay -nosplash -nodesktop -r "curves=makeCurves('/scratch/zeiberg.d/alphamax/syntheticParameters.mat', @(x,y)CurveConstructor(x,y,'useGPU',false),'setNumberStart',"$Start", 'setNumberEnd',"$End",'savePath','/scratch/zeiberg.d/alphamax/results/curves_paramsets_"$Start"_"$End"','quiet',true);exit;" &
+	F=/scratch/zeiberg.d/alphamax/results/curves_paramsets_$Start_$End
+	if test -f "$F";then
+            echo "$F exists, skipping" >> logs/makeCurves.%A_%a.out
+	    echo "" >> logs/makeCurves.%A_%a.err
+        else
+            srun matlab -nodisplay -nosplash -nodesktop -r "curves=makeCurves('/scratch/zeiberg.d/alphamax/syntheticParameters.mat', @(x,y)CurveConstructor(x,y,'useGPU',false),'setNumberStart',"$Start", 'setNumberEnd',"$End",'savePath','/scratch/zeiberg.d/alphamax/results/curves_paramsets_"$Start"_"$End"','quiet',true);exit;" &
+	fi
 done
 wait
 
