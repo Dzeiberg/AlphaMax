@@ -20,7 +20,7 @@ function [prob,aucPU] = transform_svm(x,s,varargin)
     %                    class
     %
     %   - aucPU : double : Positive/Unlabeled AUC of the transform
-    addpath("utilities");
+    % addpath("utilities");
     args= inputParser;
     addOptional(args,'polynomialOrder', 1);
     addOptional(args,'kfoldvalue', 10);
