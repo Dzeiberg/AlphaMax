@@ -112,8 +112,8 @@ classdef CurveConstructor
            end
            obj.distanceTable = DistanceTable(obj.componentSamples, obj.mixtureSamples,distanceMetric);
            if obj.useGPU
-              obj.componentSamples = gpuArray(obj.componentSamples);
-            obj.mixtureSamples = gpuArray(obj.mixtureSamples); 
+               obj.componentSamples = gpuArray(obj.componentSamples);
+               obj.mixtureSamples = gpuArray(obj.mixtureSamples); 
            end
        end
        
@@ -146,8 +146,8 @@ classdef CurveConstructor
            parfor (i = 1:obj.numCurvesToAverage, 5)
               curves(i,:) = obj.makeSingleCurve(); 
            end
-           averages = mean(curves,1);
-           distanceCurve = prctile(averages,obj.percentiles);
+%            distanceCurve = prctile(mean(curves,1),obj.percentiles,2);
+           distanceCurve = mean(prctile(curves,obj.percentiles,2),1);
            if obj.useGPU
               distanceCurve = gather(distanceCurve); 
            end
