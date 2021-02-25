@@ -20,7 +20,7 @@ classdef NeuralNetwork < Transform
         
         function [net] = constructNetwork(obj)
             net = patternnet(obj.args.hidden_layer_sizes);
-            net.trainParam.epochs = 500;
+            net.trainParam.epochs = 100;
             net.trainParam.show = NaN;
             net.trainParam.showWindow = false;
             net.trainParam.max_fail = 25;
