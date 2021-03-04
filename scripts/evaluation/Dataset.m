@@ -3,18 +3,21 @@ classdef Dataset < handle
     %   Detailed explanation goes here
     
     properties
+        filename
         X1
         X0
         C
         M
-        transforms
+        instances
         results
+        absErrs
     end
     
     methods
-        function obj = Dataset(mat)
+        function obj = Dataset(mat,filename)
             %DATASET Construct an instance of this class
             %   Detailed explanation goes here
+            obj.filename = filename;
             obj.X1 = mat.X(mat.y == 1,:);
             obj.X0 = mat.X(mat.y == 0,:);
             % set the component size to 1000 unless the dataset is small
@@ -47,7 +50,8 @@ classdef Dataset < handle
             % Use the remaining positive instances for the unlabeled set
             MComponentPosIndices = setdiff(1:size(x1,1),XCIndices);
             XM = [x1(MComponentPosIndices,:);x0];
-            YM = [ones(size(MComponentPosIndices'));zeros(size(x0,1),1)];
+            YM = [ones(size(MComponentPosIndices'));...
+                zeros(size(x0,1),1)];
             % If mixture is larger than the limit (10000) proportionally
             % downsample
             if size(YM,1) > obj.M
@@ -62,18 +66,33 @@ classdef Dataset < handle
             end 
         end
         
-        function [] = addTransforms(obj,varargin)
-            addpath("Transforms");
+        function [] = buildPUDatasets(obj,n_instances,varargin)
             args = inputParser;
             addOptional(args, 'debug',false);
             parse(args,varargin{:});
             args = args.Results;
-            X = [obj.X1;obj.X0];
-            S = [ones(length(obj.X1),1); zeros(length(obj.X0),1)];
-            % Define parameters to all transforms
-            if args.debug
-                args = {struct('transform','rt')};
-             names = {'rt';};
+            debug = args.debug;
+            instances_ = cell(n_instances,1);
+            parfor inst_num = 1:n_instances
+                [XC,XM,yM] = obj.getPUSample();
+                X = [XC;XM];
+                S = [ones(size(XC,1),1);zeros(size(XM,1),1)];
+                inst_results = obj.addTransforms(X,S,debug);
+                inst_results.XC = XC;
+                inst_results.XM = XM;
+                inst_results.yM = yM;
+                instances_{inst_num} = inst_results;
+            end
+            obj.instances = instances_;
+        end
+        
+        function [inst_results] = addTransforms(obj,X,S,debug)
+            addpath("Transforms");
+            
+            %% Define parameters to all transforms
+            if debug
+                args = {struct('transform','svm','polynomialOrder',1)};
+                names = {'svm1';};
             else
                 args = {struct('transform','rt'),...
                      struct('transform','nn','hidden_layer_sizes',[1,1]),...
@@ -83,25 +102,27 @@ classdef Dataset < handle
                      struct('transform','svm','polynomialOrder',2)};
                 names = {'rt';'nn1';'nn5';'nn25';'svm1';'svm2'};
             end
-            
-             % apply transforms
-             NP = size(obj.X1,1);
+            inst_results = struct();
+             %% apply transforms
+             NP = sum(S);
             for tnum = 1:length(names)
-                [probs,...
-                    obj.transforms.(names{tnum}).aucpu] = applyTransform(X,S,args{tnum});
-                obj.transforms.(names{tnum}).x1 = probs(1:NP);
-                obj.transforms.(names{tnum}).x0 = probs(NP + 1:end);
+                name = names{tnum};
+                [scores,...
+                    inst_results.(name).aucpu] = applyTransform(X,S,args{tnum});
+                inst_results.(name).xc = scores(1:NP);
+                inst_results.(name).xm = scores(NP + 1:end);
             end
             % find optimal transform wrt. AUCPU
             maxAUC = 0.5;
+            bestTransform = names{1,1};
             for tnum = 1:length(names)
-                if obj.transforms.(names{tnum}).aucpu > maxAUC
-                    maxAUC = obj.transforms.(names{tnum}).aucpu;
+                if inst_results.(names{tnum}).aucpu > maxAUC
+                    maxAUC = inst_results.(names{tnum}).aucpu;
                     bestTransform = names{tnum};
                 end
             end
-            obj.transforms.optimal = obj.transforms.(bestTransform);
-            obj.transforms.optimal.name = bestTransform;
+            inst_results.optimal = inst_results.(bestTransform);
+            inst_results.optimal.name = bestTransform;
         end
         
         function [] = runAlgorithms(obj,varargin)
@@ -111,23 +132,21 @@ classdef Dataset < handle
             args = args.Results;
             addpath("distcurve");addpath("alphamax");
             for i = 1:args.numReps
-                [xC, xM, yM] = obj.getPUSample(obj.transforms.optimal.x1,...
-                    obj.transforms.optimal.x0);
-                obj.results.optimal.xC{i} = xC;
-                obj.results.optimal.xM{i} = xM;
-                obj.results.optimal.yM{i} = yM;
-                obj.results.optimal.alpha{i} = sum(yM)/length(yM);
+                disp([i,args.numReps])
+                xC = obj.instances{i}.optimal.xc;
+                xM = obj.instances{i}.optimal.xm;
+                obj.results.alpha{i} = sum(obj.instances{i}.yM)/length(obj.instances{i}.yM);
                 % Run DistCurve
-                [obj.results.optimal.distCurve.alphaHat{i},...
-                    obj.results.optimal.distCurve.curve{i},~] = runDistCurve(xM, xC,...
+                [obj.results.distCurve.alphaHat{i},...
+                    obj.results.distCurve.curve{i},~] = runDistCurve(xM, xC,...
                     'transform','none');
                 % Run AlphaMax w/ Inflection Script
-                [obj.results.optimal.alphaMaxInflection.alphaHat{i},...
-                    obj.results.optimal.alphaMaxInflection.out{i}] = runAlphaMax(xM,xC,...
+                [obj.results.alphaMaxInflection.alphaHat{i},...
+                    obj.results.alphaMaxInflection.out{i}] = runAlphaMax(xM,xC,...
                     'transform','none','useEstimatorNet',false);
                 % Run AlphaMax w/ Estimator Net
-                [obj.results.optimal.alphaMaxNet.alphaHat{i},...
-                    obj.results.optimal.alphaMaxNet.out{i}] = runAlphaMax(xM,xC,...
+                [obj.results.alphaMaxNet.alphaHat{i},...
+                    obj.results.alphaMaxNet.out{i}] = runAlphaMax(xM,xC,...
                     'transform','none','useEstimatorNet',true);
             end
         end
