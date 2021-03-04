@@ -39,7 +39,7 @@ function [curves] = makeCurves(sampler, varargin)
         CurveConstructor(componentSamples,mixtureSamples);
     % Optional Arguments
     addOptional(p,'constructorHandle',defaultConstructor);
-    addOptional(p,'quiet', false);
+    addOptional(p,'quiet', true);
     addOptional(p,'savePath','')
     parse(p,varargin{:});
     if ~strcmp(p.Results.savePath,'')

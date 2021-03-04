@@ -26,7 +26,7 @@ addOptional(args,'num_bagged_models', 100);
 defaultConstructor= @(componentSamples,mixtureSamples) ...
         CurveConstructor(componentSamples,mixtureSamples);
 addOptional(args,'constructorHandle',defaultConstructor);
-addOptional(args,'quiet', false);
+addOptional(args,'quiet', true);
 addOptional(args,'savePath','')
 % estimator/getEstimate.m argument
 addOptional(args,'estimator',"none");
@@ -55,6 +55,8 @@ curve = makeCurves(makeCurveInput,...
     'quiet',args.quiet,...
     'savePath',args.savePath);
 curve = curve/sum(curve);
+%figure;
+%plot(curve)
 %% Pass Curve to Class Prior Estimator Network
 alphaHat = getDistCurveEstimate(curve,'estimator',args.estimator);
 end
