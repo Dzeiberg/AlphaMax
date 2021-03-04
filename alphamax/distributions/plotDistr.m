@@ -4,9 +4,9 @@ function [x,d]= plotDistr( distr, npts )
 if nargin <2
     npts=200;
 end
-x=random(distr,npts,1);
-x=sort(x);
-d=pdf(distr,x);
-plot(x,d);
+%x=random(distr,npts,1);
+%x=sort(x);
+%d=pdf(distr,x);
+%plot(x,d);
 end
 
