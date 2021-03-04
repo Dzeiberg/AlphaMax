@@ -47,7 +47,7 @@ S = [zeros(length(x),1);ones(length(x1),1)];
 xUnlabeled = preds(1:numU,:);
 xPos = preds(numU + 1 : end,:);
 %% Make LL Curve
-llcomputer = LLCurve(xUnlabeled, xPos);
+llcomputer = LLCurve(xUnlabeled, xPos,'parallel',false);
 [out.curveAlphas, out.fs, out.compute_llCurve_output] = llcomputer.compute_llCurve();
 out.aucPU = aucPU;
 %% Get Class Prior Estimate using estimator network
