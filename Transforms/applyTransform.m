@@ -19,7 +19,7 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
     % transform_svm.m arguments
     addOptional(args,'polynomialOrder', 1);
     addOptional(args,'kfoldvalue', 10);
-    addOptional(args,'applyPlattCorrection',true)
+    addOptional(args,'applyPlattCorrection',false)
     % transform_bagging.m arguments
     addOptional(args,'val_frac',.25, @(x) x >= 0 && x <= 1);
     addOptional(args,'num_bagged_models', 100);

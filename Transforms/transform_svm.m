@@ -1,4 +1,4 @@
-function [prob,aucPU] = transform_svm(x,s,varargin)        
+function [score,aucPU] = transform_svm(x,s,varargin)        
     %transform_svm : Fit an polynomial kernel svm using 10-fold
     %cross validation, then optionally use Platt's correction (1999) to
     %transform scores to posterior probabilities
@@ -24,17 +24,16 @@ function [prob,aucPU] = transform_svm(x,s,varargin)
     args= inputParser;
     addOptional(args,'polynomialOrder', 1);
     addOptional(args,'kfoldvalue', 10);
-    addOptional(args,'applyPlattCorrection',true)
+    addOptional(args,'applyPlattCorrection',false)
     parse(args,varargin{:});
     args = args.Results;
     model = fitcsvm(x,s,'KernelFunction','polynomial',...
         'PolynomialOrder',args.polynomialOrder,...
         'KFold',args.kfoldvalue);
-    [labels,~] = kfoldPredict(model);
+    [labels,score] = kfoldPredict(model);
+    score = score(:,2);
     if args.applyPlattCorrection
-        [prob] = plattCorrect(labels);
-    else
-        prob = labels;
+        [score] = plattCorrect(labels);
     end
-    aucPU = get_auc_ultra(prob,s);
+    aucPU = get_auc_ultra(score,s);
 end
