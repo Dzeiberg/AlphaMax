@@ -66,7 +66,7 @@ classdef CurveConstructor
            % Header template adapted from: 
            % Denis Gilbert (2020). M-file Header Template (https://www.mathworks.com/matlabcentral/fileexchange/4908-m-file-header-template), MATLAB Central File Exchange. Retrieved November 16, 2020.
            % ------------ Parse and Validate Parameters -----
-           defaultNumCurvesToAverage = 10;
+           defaultNumCurvesToAverage = 25;
            defaultDistanceMetric = 'cityblock';
            defaultPercentiles= 0:99;
            p= inputParser;
@@ -79,7 +79,7 @@ classdef CurveConstructor
            addOptional(p,'numCurvesToAverage',defaultNumCurvesToAverage,isValidScalarPosNum);
            addOptional(p,'distanceMetric', defaultDistanceMetric);
            addOptional(p, 'percentiles',defaultPercentiles,areValidPercentiles);
-           addOptional(p, 'useGPU', false);
+           addOptional(p, 'useGPU', true);
            parse(p,componentSamples,mixtureSamples,varargin{:});
            obj.componentSamples = p.Results.componentSamples;
            obj.mixtureSamples = p.Results.mixtureSamples;
@@ -143,11 +143,11 @@ classdef CurveConstructor
            if obj.useGPU
             curves = gpuArray(curves);
            end
-           parfor (i = 1:obj.numCurvesToAverage, 5)
+           parfor i = 1:obj.numCurvesToAverage
               curves(i,:) = obj.makeSingleCurve(); 
            end
-%            distanceCurve = prctile(mean(curves,1),obj.percentiles,2);
-           distanceCurve = mean(prctile(curves,obj.percentiles,2),1);
+           distanceCurve = prctile(mean(curves,1),obj.percentiles,2);
+           %distanceCurve = mean(prctile(curves,obj.percentiles,2),1);
            if obj.useGPU
               distanceCurve = gather(distanceCurve); 
            end
