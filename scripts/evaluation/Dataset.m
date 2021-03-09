@@ -73,7 +73,10 @@ classdef Dataset < handle
             args = args.Results;
             debug = args.debug;
             instances_ = cell(n_instances,1);
+            times = 0;
+            f = waitbar(0,strcat('building dataset instance: ','0/',num2str(n_instances), '   ---   average time: ',num2str(times/1)));
             for inst_num = 1:n_instances
+                tic;
                 [XC,XM,yM] = obj.getPUSample();
                 X = [XC;XM];
                 S = [ones(size(XC,1),1);zeros(size(XM,1),1)];
@@ -82,8 +85,12 @@ classdef Dataset < handle
                 inst_results.XM = XM;
                 inst_results.yM = yM;
                 instances_{inst_num} = inst_results;
+                elapsedTime=toc;
+                times = times + elapsedTime;
+                waitbar(inst_num/n_instances,f,strcat('building dataset instance: ',inst_num,'/',num2str(n_instances), '   ---   average time: ',num2str(times/inst_num)));
             end
             obj.instances = instances_;
+            close(f);
         end
         
         function [inst_results] = addTransforms(obj,X,S,debug)
@@ -105,13 +112,20 @@ classdef Dataset < handle
             inst_results = struct();
              %% apply transforms
              NP = sum(S);
+             times = 0;
+             f = waitbar(0,strcat('applying transforms: 0/',num2str(length(names)),'    average time: ',num2str(times/1)));
             for tnum = 1:length(names)
+                tic;
                 name = names{tnum};
                 [scores,...
                     inst_results.(name).aucpu] = applyTransform(X,S,args{tnum});
                 inst_results.(name).xc = scores(1:NP);
                 inst_results.(name).xm = scores(NP + 1:end);
+                elapsed = toc;
+                times = times + elapsed;
+                waitbar(tnum/length(names),f, strcat('applying transforms: ',num2str(tnum),'/',num2str(length(names)),'------- average time: ',num2str(times/tnum)));
             end
+            close(f);
             % find optimal transform wrt. AUCPU
             maxAUC = 0.5;
             bestTransform = names{1,1};
