@@ -1,9 +1,12 @@
 # AlphaMax
 Matlab methods for estimating class priors in the positive-unlabeled classification setting
 
-## Requirements
+## Required Toolboxes
  - deep learning toolbox
- - parallel computing toolbox
+ - optimization toolbox
+
+## Recommended Toolboxes
+- parallel computing toolbox
 
 ## How to run AlphaMax
 [Jain et al. 2016](https://arxiv.org/pdf/1601.01944.pdf)
