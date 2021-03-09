@@ -19,8 +19,14 @@ classdef NeuralNetwork < Transform
         end
         
         function [net] = constructNetwork(obj)
-            net = patternnet(obj.args.hidden_layer_sizes);
-            net.trainParam.epochs = 100;
+            % construct network with previously specified hidden layers
+            % and use resilient backpropagation as the optimizer
+            net = feedforwardnet(obj.args.hidden_layer_sizes,'trainrp');
+            % Set the activation function of each hidden layer to tansig
+            for layerNum=1:length(obj.args.hidden_layer_sizes)
+                net.layers{layerNum}.transferFcn = 'tansig';   
+            end
+            net.trainParam.epochs = 500;
             net.trainParam.show = NaN;
             net.trainParam.showWindow = false;
             net.trainParam.max_fail = 25;
@@ -39,7 +45,7 @@ classdef NeuralNetwork < Transform
         function [preds] = tpredict(obj,x)
             % return the probability that each point came from the positive
             % (v. unlabeled) set
-            preds = obj.model(x');
+            preds = sim(obj.model, x');
         end
     end
 end
