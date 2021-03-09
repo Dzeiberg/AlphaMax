@@ -20,6 +20,7 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
     addOptional(args,'polynomialOrder', 1);
     addOptional(args,'kfoldvalue', 10);
     addOptional(args,'applyPlattCorrection',false)
+    addOptional(args','SVMlightpath','~/research/software/svm_light');
     % transform_bagging.m arguments
     addOptional(args,'val_frac',.25, @(x) x >= 0 && x <= 1);
     addOptional(args,'num_bagged_models', 100);
@@ -40,7 +41,7 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
     elseif strcmp(args.transform, "svm")
         [preds,aucPU] = transform_svm(X,S,'parameter',args.polynomialOrder,...
             'kfoldvalue',args.kfoldvalue,...
-            'applyPlattCorrection',args.applyPlattCorrection);
+            'applyPlattCorrection',args.applyPlattCorrection,'SVMlightpath',args.SVMlightpath);
     elseif strcmp(args.transform, 'none')
         aucPU = get_auc_ultra(X,S);
         preds = X;
@@ -93,5 +94,5 @@ end
 function [res] = doSVM(X,S,order)
     [res.preds,res.aucPU] = transform_svm(X,S,'parameter',order,...
             'kfoldvalue',10,...
-            'applyPlattCorrection',true);
+            'applyPlattCorrection',true,'SVMlightpath',args.SVMlightpath);
 end

@@ -73,7 +73,7 @@ classdef Dataset < handle
             args = args.Results;
             debug = args.debug;
             instances_ = cell(n_instances,1);
-            parfor inst_num = 1:n_instances
+            for inst_num = 1:n_instances
                 [XC,XM,yM] = obj.getPUSample();
                 X = [XC;XM];
                 S = [ones(size(XC,1),1);zeros(size(XM,1),1)];
