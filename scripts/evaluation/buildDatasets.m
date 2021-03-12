@@ -1,5 +1,5 @@
 files = dir("/ssdata/ClassPriorEstimationPrivate/data/rawDatasets/*.mat");
-for fileNum = 1:length(files)
+for fileNum = length(files):-1:2
     %% Generate Dataset with transforms
     disp([fileNum,length(files)])
     mat = load(strcat(files(fileNum).folder,"/",files(fileNum).name));

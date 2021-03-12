@@ -147,7 +147,6 @@ classdef CurveConstructor
               curves(i,:) = obj.makeSingleCurve(); 
            end
            distanceCurve = prctile(mean(curves,1),obj.percentiles,2);
-           %distanceCurve = mean(prctile(curves,obj.percentiles,2),1);
            if obj.useGPU
               distanceCurve = gather(distanceCurve); 
            end

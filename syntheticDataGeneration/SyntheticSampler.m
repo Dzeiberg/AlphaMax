@@ -72,6 +72,7 @@ classdef SyntheticSampler < Sampler & handle
            positiveSample = betarnd(obj.params.a1(obj.set),...
                                     obj.params.b1(obj.set),...
                                     [int64(obj.params.componentSizes(obj.set, obj.instance)),1]);
+           % Mixture
            mixtureSample = zeros(int64(obj.params.mixtureSizes(obj.set, obj.instance)), 1);
            for mixSampleNum = 1: obj.params.mixtureSizes(obj.set, obj.instance)
                if binornd(1, obj.params.alphas(obj.set, obj.instance))

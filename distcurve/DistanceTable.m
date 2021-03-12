@@ -27,7 +27,7 @@ classdef DistanceTable
             obj.distances = pdist2(componentSamples, mixtureSamples, distance_metric);
         end
         
-        function [smallestDist, index] = getNearestNeighbor(obj, componentIndex, mixtureIndices)
+        function [smallestDist, index] = getNearestNeighbor(obj, componentIndex, mixtureInstanceRemaining)
             % GETNEARESTNEIGHBOR Given the index of a compoenent sample of
             % interest and a subset of mixture indices, return the index of
             % the nearest mixture point and the corresponding distance
@@ -39,8 +39,10 @@ classdef DistanceTable
             % mixtureIndices - (n x 1) int - indices of the mixture points
             % you would like to consider when finding the nearest neighbor
             dists = obj.distances(componentIndex,:);
-            [smallestDist, minDIdx] = min(dists(mixtureIndices));
-            index = mixtureIndices(minDIdx);
+            [smallestDist, minDIdx] = min(dists(mixtureInstanceRemaining));
+            [r,~,~] = find(mixtureInstanceRemaining);
+            index = r(minDIdx);
+%             index = mixtureInstanceRemaining(minIdx);
         end
     end
 end
