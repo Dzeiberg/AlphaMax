@@ -1,7 +1,7 @@
 files = dir("data/datasets/*.mat");
 absErrs = struct('distCurve',[],'alphaMaxInflection',[],'alphaMaxNet',[]);
 for fileNum = 1:length(files)
-    if ~isfile(strcat("data/results/distCurveMode1/",files(fileNum).name))
+    if ~isfile(strcat("data/results/newTransforms/",files(fileNum).name))
         disp(files(fileNum).name)
         ds = load(strcat("data/datasets/",files(fileNum).name),'ds');
         ds = ds.ds;
@@ -19,6 +19,6 @@ for fileNum = 1:length(files)
         alphaMaxNetAlphaHats = cell2mat(ds.results.alphaMaxNet.alphaHat);
         alphaMaxNetAbsErrs = abs(alphaMaxNetAlphaHats - cell2mat(ds.results.alpha));
         absErrs.alphaMaxNet = [absErrs.alphaMaxNet; alphaMaxNetAbsErrs];
-        save(strcat("data/results/distCurveMode1/",files(fileNum).name),'ds');
+        save(strcat("data/results/newTransforms/",files(fileNum).name),'ds');
     end
 end
