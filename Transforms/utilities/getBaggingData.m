@@ -1,6 +1,7 @@
 function [inBagData, inBagLabels, finalTrainIndices, finalValIndices, outOfBagData, outOfBagIndices] = getBaggingData(X, S, val_frac)
     %GETBAGGINGDATA Prep the data for training, validation, and out-of-bag
     %prediction
+    %
     % Get in-bag and out-of-bag indices
     [inBagIndices,outOfBagIndices] = getBootstrapIndices(size(X,1));
     % shuffle inBagIndices to get train and val indices
