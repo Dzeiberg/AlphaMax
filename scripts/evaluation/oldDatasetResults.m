@@ -1,3 +1,7 @@
+% Extract the MAE of the new model implementations on the data transformed
+% using the previous implementation
+%
+% See evaluateOldDatasets.m for the running of the algorithms
 resultFiles = dir("data/results/results_pedja/*.mat");
 absErrs = struct("alphaMaxNet",[],...
     "distCurve",[],...

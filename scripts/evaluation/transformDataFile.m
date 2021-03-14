@@ -1,3 +1,7 @@
+% Extract positive component samples, unlabeled component samples, 
+% using the optimal transform and the class prior from the previous data
+% files
+
 function [] = transformDataFile()
     files = dir("/ssdata/ClassPriorEstimationPrivate/data/realData/*/*.mat");
     for filenum = 1:length(files)

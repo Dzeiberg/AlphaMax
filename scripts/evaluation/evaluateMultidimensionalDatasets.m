@@ -1,3 +1,5 @@
+% Run the 3 models on the data transformed using the new transnform
+% implementation
 files = dir("data/datasets/*.mat");
 absErrs = struct('distCurve',[],'alphaMaxInflection',[],'alphaMaxNet',[]);
 for fileNum = length(files):-1:1

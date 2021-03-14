@@ -1,6 +1,9 @@
 classdef Dataset < handle
-    %DATASET Summary of this class goes here
-    %   Detailed explanation goes here
+    % Object used to evaluate the implementation on multi-dimensional
+    % datasets from (Zeiberg et al. 2020). Contains methods to generate the
+    % data with the univariate transforms and run the models on this data
+    %
+    % See buildDatasets.m and evalauteMultidimensionalDatasets.m
     
     properties
         filename
@@ -67,6 +70,8 @@ classdef Dataset < handle
         end
         
         function [] = buildPUDatasets(obj,n_instances,varargin)
+            % generate n_instances P/U samples and find the optimal
+            % univariate transform for each sample
             args = inputParser;
             addOptional(args, 'debug',false);
             parse(args,varargin{:});
@@ -93,7 +98,7 @@ classdef Dataset < handle
             close(f);
         end
         
-        function [inst_results] = addTransforms(obj,X,S,debug)
+        function [inst_results] = addTransforms(~,X,S,debug)
             addpath("Transforms");
             
             %% Define parameters to all transforms
@@ -140,6 +145,7 @@ classdef Dataset < handle
         end
         
         function [] = runAlgorithms(obj,varargin)
+            % Run the three methods
             args = inputParser;
             addOptional(args, 'numReps',10);
             parse(args,varargin{:});

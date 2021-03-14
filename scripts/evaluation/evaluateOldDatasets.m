@@ -1,3 +1,7 @@
+% Run the 3 models on the previously processed data sets to verify the
+% validity of this new implementation
+%
+% See oldDatasetResults.m to view results
 files = dir("data/datasets_pedja/*.mat");
 addpath("distcurve","alphamax");
 for fileNum = 1:length(files)

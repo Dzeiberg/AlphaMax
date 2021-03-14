@@ -1,10 +1,11 @@
+% Extract the mean absolute errors for each model in the new implementation
+% on the 30 multi-dimensional data sets
 datasets = struct();
 resultFiles = dir("data/results/newTransforms/*.mat");
 absErrs = struct("alphaMaxNet",[],...
     "distCurve",[],...
     "alphaMax",[]);
 disp(["Dataset","AlphaMaxNet","AlphaMax","DistCurve"]);
-% disp(["Dataset","DistCurve"])
 for fileNum = 1:length(resultFiles)
     filename = replace(resultFiles(fileNum).name,".mat","");
     
@@ -24,9 +25,7 @@ for fileNum = 1:length(resultFiles)
     disp({filename,mean(amnetAbsErrs,'all'),...
         mean(amAbsErrs,'all'),...
         mean(dcAbsErrs,'all')});
-    %disp({filename,mean(dcAbsErrs,'all')})
 end
  disp(["Overall",mean(absErrs.alphaMaxNet,'all'),...
      mean(absErrs.alphaMax,'all'),...
      mean(absErrs.distCurve,'all')]);
-%disp({"Overall",mean(absErrs.distCurve,'all')});

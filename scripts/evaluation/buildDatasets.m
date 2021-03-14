@@ -1,3 +1,4 @@
+% Train the 6 transforms for each data set to later be used in evaluation
 files = dir("/ssdata/ClassPriorEstimationPrivate/data/rawDatasets/*.mat");
 for fileNum = length(files):-1:2
     if ~isfile(strcat("data/datasets/",files(fileNum).name))
