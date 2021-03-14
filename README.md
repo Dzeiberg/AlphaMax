@@ -58,6 +58,9 @@ Mean Absolute Error on 30 multi-dimensional datasets from [UCI Machine Learning 
 |  |  |  |  |
 | Overall | 0.1362 | 0.1609 | 0.0930 |
 
+## Related Repositories
+[DistCurve Python Implementation](https://github.com/Dzeiberg/dist_curve)
+
 ## Contact
 
 Daniel Zeiberg - zeiberg.d@northeastern.edu
