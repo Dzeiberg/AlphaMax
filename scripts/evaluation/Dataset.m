@@ -87,7 +87,7 @@ classdef Dataset < handle
                 instances_{inst_num} = inst_results;
                 elapsedTime=toc;
                 times = times + elapsedTime;
-                waitbar(inst_num/n_instances,f,strcat('building dataset instance: ',inst_num,'/',num2str(n_instances), '   ---   average time: ',num2str(times/inst_num)));
+                waitbar(inst_num/n_instances,f,strcat('building dataset instance: ',num2str(inst_num),'/',num2str(n_instances), '   ---   average time: ',num2str(times/inst_num)));
             end
             obj.instances = instances_;
             close(f);
@@ -99,7 +99,7 @@ classdef Dataset < handle
             %% Define parameters to all transforms
             if debug
                 args = {struct('transform','svm','polynomialOrder',1)};
-                names = {'svm1';};
+                names = {'svm';};
             else
                 args = {struct('transform','rt'),...
                      struct('transform','nn','hidden_layer_sizes',[1,1]),...

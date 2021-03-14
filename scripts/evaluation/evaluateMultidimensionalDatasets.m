@@ -1,6 +1,6 @@
 files = dir("data/datasets/*.mat");
 absErrs = struct('distCurve',[],'alphaMaxInflection',[],'alphaMaxNet',[]);
-for fileNum = 1:length(files)
+for fileNum = length(files):-1:1
     if ~isfile(strcat("data/results/newTransforms/",files(fileNum).name))
         disp(files(fileNum).name)
         ds = load(strcat("data/datasets/",files(fileNum).name),'ds');
