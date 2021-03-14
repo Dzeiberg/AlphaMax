@@ -5,8 +5,8 @@ function [alphaHat, out] = runAlphaMax(x,x1,varargin)
 %   - x1 : component sample : n x d
 %
 % Optional Arguments:
-%    - useEstimatorNet : default true : use the estimator net rather than
-%    the inflection script to estimate the class prior from the ll curve
+%    - useEstimatorNet : default true : use the estimator net (AlphaMaxNet) rather than
+%    the inflection script (AlphaMax) to estimate the class prior from the ll curve
 %
 %   See the files noted below for details on the other optional arguments
 addpath(fullfile(fileparts(mfilename('fullpath')),"../Transforms"));
