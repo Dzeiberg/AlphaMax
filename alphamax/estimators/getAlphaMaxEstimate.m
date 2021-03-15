@@ -9,13 +9,14 @@ function [alphaHat] = getAlphaMaxEstimate(ll_curve,varargin)
     addOptional(args,'estimator',"alphamaxEstimator.mat");
     parse(args,varargin{:});
     args = args.Results;
-    if isstring(args.estimator) && isfile(args.estimator)
+    if (isstring(args.estimator) || ischar(args.estimator)) && isfile(args.estimator)
         addpath(fullfile(fileparts(mfilename('fullpath')),"../../distcurve/estimator/"));
         estimator = load(args.estimator);
         estimator = estimator.net;
     elseif isa(args.estimator, 'SeriesNetwork')
         estimator = args.estimator;
     else
+        error(strcat("cannot find file",args.estimator));
         error("estimator must either be a path to a struct with a field net or a SeriesNet object");
     end
     alphaHat = predict(estimator,minmaxScale(ll_curve));
