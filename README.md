@@ -1,6 +1,7 @@
 # AlphaMax
 Matlab methods for estimating class priors in the positive-unlabeled classification setting
 
+[![View Positive-Unlabeled Learning Tools on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/125175-positive-unlabeled-learning-tools)
 ## Required Toolboxes
  - deep learning toolbox
  - optimization toolbox
