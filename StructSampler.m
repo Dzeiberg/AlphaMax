@@ -20,7 +20,6 @@ classdef StructSampler < Sampler & handle
     methods
         function obj = StructSampler(mat,varargin)
             %StructSampler Construct an instance of this class
-            %   Detailed explanation goes here
             obj.mat = mat;
             [obj.n, obj.d] = size(mat.xPos);
             [obj.m,~] = size(mat.xUnlabeled);
