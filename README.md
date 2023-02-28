@@ -11,12 +11,31 @@ Matlab methods for estimating class priors in the positive-unlabeled classificat
 ## How to run AlphaMax
 [Jain et al. 2016](https://arxiv.org/pdf/1601.01944.pdf)
 
-The main function for running AlphaMax is [runAlphaMax](alphamax/runAlphaMax.m). See [testalphamax.m](tests/testalphamax.m) for an example of how to estimate the class priors of synthetically generated datasets.
+The main function for running AlphaMax is [runAlphaMax](alphamax/runAlphaMax.m). See below for an example of how to estimate the class priors of a real data set
 
 ## How to run DistCurve
 [Zeiberg et al. 2020](https://ojs.aaai.org//index.php/AAAI/article/view/6151)
 
-The main function for running DistCurve is [runDistCurve](distcurve/runDistCurve.m). See [testdistcurve.m](tests/testdistcurve.m) for an example of how to use DistCurve to estimate the class priors of synthetically generated datasets.
+The main function for running DistCurve is [runDistCurve](distcurve/runDistCurve.m). See [testdistcurve.m](tests/testdistcurve.m) for an example of how to use DistCurve to estimate the class priors of a real data set
+
+## Example Code
+```matlab
+% Load Data
+data = load("data/datasets/anuran/anuran.mat");
+C = data.C;
+M = data.M;
+true_class_prior = sum(data.yM) / length(data.yM);
+
+% Run AlphaMax
+addpath("alphamax");
+alphamax_estimator = "alphamax/estimators/alphamaxEstimator.mat";
+[alphaMax_pred,alphaMax_out] = runAlphaMax(M,C,'transform','rt','useEstimatorNet',true,'estimator',alphamax_estimator);
+
+%Run DistCurve
+addpath("distcurve");
+distcurve_estimator = "distcurve/estimator/smallnetwork.mat";
+[distCurve_pred,distCurve_curve, distCurve_aucPU] = runDistCurve(M,C,'transform','rt','estimator',distcurve_estimator);
+```
 
 ## Results
 
