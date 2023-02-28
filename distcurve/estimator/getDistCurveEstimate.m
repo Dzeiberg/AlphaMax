@@ -6,6 +6,9 @@ function [alphaHat] = getDistCurveEstimate(curve,varargin)
     if isstring(args.estimator) && strcmp(args.estimator,"none")
         estimator = load("bignetwork.mat");
         estimator = estimator.net;
+    elseif isstring(args.estimator) && ~strcmp(args.estimator,"none")
+        estimator = load(args.estimator);
+        estimator = estimator.net;
     elseif isa(args.estimator, 'SeriesNetwork')
         estimator = args.estimator;
     else

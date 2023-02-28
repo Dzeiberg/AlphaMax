@@ -28,7 +28,7 @@ defaultConstructor= @(componentSamples,mixtureSamples) ...
 addOptional(args,'constructorHandle',defaultConstructor);
 addOptional(args,'quiet', true);
 addOptional(args,'savePath','')
-% estimator/getEstimate.m argument
+% estimator/getDistCurveEstimate.m argument
 addOptional(args,'estimator',"none");
 %% Parse Arguments
 parse(args,varargin{:});
