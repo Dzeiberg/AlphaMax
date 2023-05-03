@@ -1,6 +1,7 @@
 .ipynb_checkpoints/
 distcurve/estimator/bignetwork.mat
 logs/
-data/
 *.m~
 *.asv
+data/uci_ml_datasets.zip
+data/uci_ml_datasets/*.mat

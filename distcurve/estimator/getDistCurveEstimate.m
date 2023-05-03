@@ -4,7 +4,7 @@ function [alphaHat] = getDistCurveEstimate(curve,varargin)
     parse(args,varargin{:});
     args = args.Results;
     if isstring(args.estimator) && strcmp(args.estimator,"none")
-        estimator = load("bignetwork.mat");
+        estimator = load("network.mat");
         estimator = estimator.net;
     elseif isstring(args.estimator) && ~strcmp(args.estimator,"none")
         estimator = load(args.estimator);

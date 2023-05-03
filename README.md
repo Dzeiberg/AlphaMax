@@ -2,12 +2,18 @@
 Matlab methods for estimating class priors in the positive-unlabeled classification setting
 
 [![View Positive-Unlabeled Learning Tools on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/125175-positive-unlabeled-learning-tools)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7892963.svg)](https://doi.org/10.5281/zenodo.7892963)
+
 ## Required Toolboxes
  - deep learning toolbox
  - optimization toolbox
 
 ## Recommended Toolboxes
 - parallel computing toolbox
+
+## Datasets
+Datasets are available at [Zenodo](https://zenodo.org/record/7892963) and should be downloaded to [data/uci_ml_datasets](data/uci_ml_datasets)
 
 ## How to run AlphaMax
 [Jain et al. 2016](https://arxiv.org/pdf/1601.01944.pdf)
@@ -20,22 +26,28 @@ The main function for running AlphaMax is [runAlphaMax](alphamax/runAlphaMax.m).
 The main function for running DistCurve is [runDistCurve](distcurve/runDistCurve.m). See [testdistcurve.m](tests/testdistcurve.m) for an example of how to use DistCurve to estimate the class priors of a real data set
 
 ## Example Code
+
 ```matlab
-% Load Data
-data = load("data/datasets/anuran/anuran.mat");
-C = data.C;
-M = data.M;
-true_class_prior = sum(data.yM) / length(data.yM);
+% Load samples from the UCI gas dataset that have already been transformed
+addpath(genpath("."));
+load("data/uci_ml_datasets/gas.mat");
+XM=ds.instances{1}.optimal.xm;
+XC=ds.instances{1}.optimal.xc;
+trueClassPrior=sum(ds.instances{1}.yM)/size(ds.instances{1}.yM,1);
 
 % Run AlphaMax
-addpath("alphamax");
-alphamax_estimator = "alphamax/estimators/alphamaxEstimator.mat";
-[alphaMax_pred,alphaMax_out] = runAlphaMax(M,C,'transform','rt','useEstimatorNet',true,'estimator',alphamax_estimator);
+%addpath("alphamax");
+path_to_alphamax_estimator = "alphamax/estimators/alphamaxEstimator.mat";
+[alphaMax_pred,alphaMax_out] = runAlphaMax(XM,XC,'transform','rt','useEstimatorNet',true,...
+     'estimator',path_to_alphamax_estimator);
 
 %Run DistCurve
 addpath("distcurve");
-distcurve_estimator = "distcurve/estimator/smallnetwork.mat";
-[distCurve_pred,distCurve_curve, distCurve_aucPU] = runDistCurve(M,C,'transform','rt','estimator',distcurve_estimator);
+path_to_distcurve_estimator = "distcurve/estimator/network.mat";
+[distCurve_pred,distCurve_curve, distCurve_aucPU] = runDistCurve(XM,XC,'transform','rt',...
+    'estimator',path_to_distcurve_estimator);
+
+disp(strcat("True Class Prior: ",num2str(trueClassPrior),"; AlphaMaxNet Estimate: ",num2str(alphaMax_pred),"; DistCurve Estimate: ",num2str(distCurve_pred)))
 ```
 
 ## Results

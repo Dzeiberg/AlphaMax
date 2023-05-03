@@ -33,7 +33,7 @@ classdef StructSampler < Sampler & handle
         function [xP,xU,alpha] = getSample(obj,~)
             % Return dummy for compatability
             alpha = -1;
-            if boolean(obj.nBootstraps)
+            if obj.nBootstraps > 0
                 xP = datasample(obj.mat.xPos,obj.n);
                 xU = datasample(obj.mat.xUnlabeled, obj.m);
             else
