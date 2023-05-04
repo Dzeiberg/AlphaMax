@@ -69,6 +69,7 @@ trueClassPrior=sum(ds.instances{1}.yM)/size(ds.instances{1}.yM,1);
 ```
 
 ### Load PU Dataset
+```matlab
 addpath(genpath("."));
 % Load Data from CSV Files
 XC = readmatrix('data/example/example_data_pu/XC.csv');
@@ -82,6 +83,7 @@ S = [yC;yM];
 transformResults = Dataset.transform_PU_data(X,S);
 XC = transformResults.optimal.xc;
 XM = transformResults.optimal.xm
+```
 ## Results
 
 Mean Absolute Error on 30 multi-dimensional datasets from [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php)
