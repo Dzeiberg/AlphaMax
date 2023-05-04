@@ -20,7 +20,7 @@ function [preds,aucPU] = applyTransform(X,S,varargin)
     addOptional(args,'polynomialOrder', 1);
     addOptional(args,'kfoldvalue', 10);
     addOptional(args,'applyPlattCorrection',false)
-    addOptional(args','SVMlightpath','~/research/software/svm_light');
+    addOptional(args','SVMlightpath',fullfile(stdlib.expanduser("~"),"Documents","svm_light"));
     % transform_bagging.m arguments
     addOptional(args,'val_frac',.25, @(x) x >= 0 && x <= 1);
     addOptional(args,'num_bagged_models', 100);

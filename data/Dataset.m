@@ -85,7 +85,7 @@ classdef Dataset < handle
                 [XC,XM,yM] = obj.getPUSample();
                 X = [XC;XM];
                 S = [ones(size(XC,1),1);zeros(size(XM,1),1)];
-                inst_results = obj.addTransforms(X,S,debug);
+                inst_results = obj.transform_PU_data(X,S,'debug',debug);
                 inst_results.XC = XC;
                 inst_results.XM = XM;
                 inst_results.yM = yM;
@@ -98,11 +98,48 @@ classdef Dataset < handle
             close(f);
         end
         
-        function [inst_results] = addTransforms(~,X,S,debug)
+        function [] = runAlgorithms(obj,varargin)
+            % Run the three methods
+            args = inputParser;
+            addOptional(args, 'numReps',10);
+            parse(args,varargin{:});
+            args = args.Results;
+            addpath("distcurve");addpath("alphamax");
+            for i = 1:args.numReps
+                disp([i,args.numReps])
+                xC = obj.instances{i}.optimal.xc;
+                xM = obj.instances{i}.optimal.xm;
+                obj.results.alpha{i} = sum(obj.instances{i}.yM)/length(obj.instances{i}.yM);
+                % Run DistCurve
+                [obj.results.distCurve.alphaHat{i},...
+                    obj.results.distCurve.curve{i},~] = runDistCurve(xM, xC,...
+                    'transform','none');
+                % Run AlphaMax w/ Inflection Script
+                [obj.results.alphaMaxInflection.alphaHat{i},...
+                    obj.results.alphaMaxInflection.out{i}] = runAlphaMax(xM,xC,...
+                    'transform','none','useEstimatorNet',false);
+                % Run AlphaMax w/ Estimator Net
+                [obj.results.alphaMaxNet.alphaHat{i},...
+                    obj.results.alphaMaxNet.out{i}] = runAlphaMax(xM,xC,...
+                    'transform','none','useEstimatorNet',true);
+            end
+        end
+    end
+    methods(Static)
+
+        function [inst_results] = transform_PU_data(X,S,varargin)
+            % Run univariate transforms on PU Data
+            % Required Arguments:
+            % - X : (n,d) feature matrix
+            % - S : (n,1) PU label matrix with 1 denoting positive and 0 denoting negative
+            parser = inputParser;
+            addOptional(parser,'debug',false);
+            parse(parser,varargin{:});
+            args_in = parser.Results;
             addpath("Transforms");
             
             %% Define parameters to all transforms
-            if debug
+            if args_in.debug
                 args = {struct('transform','svm','polynomialOrder',1)};
                 names = {'svm';};
             else
@@ -142,33 +179,6 @@ classdef Dataset < handle
             end
             inst_results.optimal = inst_results.(bestTransform);
             inst_results.optimal.name = bestTransform;
-        end
-        
-        function [] = runAlgorithms(obj,varargin)
-            % Run the three methods
-            args = inputParser;
-            addOptional(args, 'numReps',10);
-            parse(args,varargin{:});
-            args = args.Results;
-            addpath("distcurve");addpath("alphamax");
-            for i = 1:args.numReps
-                disp([i,args.numReps])
-                xC = obj.instances{i}.optimal.xc;
-                xM = obj.instances{i}.optimal.xm;
-                obj.results.alpha{i} = sum(obj.instances{i}.yM)/length(obj.instances{i}.yM);
-                % Run DistCurve
-                [obj.results.distCurve.alphaHat{i},...
-                    obj.results.distCurve.curve{i},~] = runDistCurve(xM, xC,...
-                    'transform','none');
-                % Run AlphaMax w/ Inflection Script
-                [obj.results.alphaMaxInflection.alphaHat{i},...
-                    obj.results.alphaMaxInflection.out{i}] = runAlphaMax(xM,xC,...
-                    'transform','none','useEstimatorNet',false);
-                % Run AlphaMax w/ Estimator Net
-                [obj.results.alphaMaxNet.alphaHat{i},...
-                    obj.results.alphaMaxNet.out{i}] = runAlphaMax(xM,xC,...
-                    'transform','none','useEstimatorNet',true);
-            end
         end
     end
 end

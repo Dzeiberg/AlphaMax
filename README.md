@@ -5,11 +5,15 @@ Matlab methods for estimating class priors in the positive-unlabeled classificat
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7892963.svg)](https://doi.org/10.5281/zenodo.7892963)
 
-## Required Toolboxes
+## Pre-requisites
+### Required Toolboxes
  - deep learning toolbox
  - optimization toolbox
+ - [matlab-stdlib](https://www.mathworks.com/matlabcentral/fileexchange/78673-matlab-stdlib)
+### Required Software
+- [svm-light](https://www.cs.cornell.edu/people/tj/svm_light/) - SVM Univariate Transform requires the files present at `~/Documents/svm_light`, but can be modified using the `SVMlightpath` argument in [transform_svm](Transforms/transform_svm.m)
 
-## Recommended Toolboxes
+### Recommended Toolboxes
 - parallel computing toolbox
 
 ## Datasets
@@ -26,7 +30,7 @@ The main function for running AlphaMax is [runAlphaMax](alphamax/runAlphaMax.m).
 The main function for running DistCurve is [runDistCurve](distcurve/runDistCurve.m). See [testdistcurve.m](tests/testdistcurve.m) for an example of how to use DistCurve to estimate the class priors of a real data set
 
 ## Example Code
-
+### Run Estimators on Pre-processed Data
 ```matlab
 % Load samples from the UCI gas dataset that have already been transformed
 addpath(genpath("."));
@@ -49,7 +53,35 @@ path_to_distcurve_estimator = "distcurve/estimator/network.mat";
 
 disp(strcat("True Class Prior: ",num2str(trueClassPrior),"; AlphaMaxNet Estimate: ",num2str(alphaMax_pred),"; DistCurve Estimate: ",num2str(distCurve_pred)))
 ```
+### Generate dataset from PN Data
+```matlab
+addpath(genpath("."));
+% Load data from csv files
+mat.X = readmatrix('data/example/example_data_pn/X.csv');
+mat.y = readmatrix('data/example/example_data_pn/y.csv');
+ds = Dataset(mat,"example");
+% Generate 1 PU instance from this dataset
+ds.buildPUDatasets(1);
+% Read Component sample and Mixture sample
+XC = ds.instance{1}.optimal.xc;
+XM = ds.instance{1}.optimal.xm;
+trueClassPrior=sum(ds.instances{1}.yM)/size(ds.instances{1}.yM,1);
+```
 
+### Load PU Dataset
+addpath(genpath("."));
+% Load Data from CSV Files
+XC = readmatrix('data/example/example_data_pu/XC.csv');
+XM = readmatrix('data/example/example_data_pu/XM.csv');
+% Optionally Run Univariate Transforms to reduce data from d-dimensions to 1 dimension
+%     Generate Feature matrix X and PU label matrix S
+X = [XC;XM];
+yC = ones(size(XC,1),1);
+yM = zeros(size(XM,1),1);
+S = [yC;yM];
+transformResults = Dataset.transform_PU_data(X,S);
+XC = transformResults.optimal.xc;
+XM = transformResults.optimal.xm
 ## Results
 
 Mean Absolute Error on 30 multi-dimensional datasets from [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php)

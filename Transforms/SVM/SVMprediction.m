@@ -17,7 +17,7 @@ file4 = random_filename('file4', '');
 % good balanced accuracy)
 ratio = length(find(labels_train == -1)) / length(find(labels_train == 1));
 %ratio = 1;
-options = svmlopt('Regression', 0, 'Kernel', info.kernel, 'KernelParam', info.parameter, 'CostFactor', ratio * info.pos_weight, 'ExecPath', info.SVMlightpath);
+options = svmlopt('Regression', 0, 'Kernel', info.kernel, 'KernelParam', info.parameter, 'CostFactor', ratio * info.pos_weight, 'ExecPath', convertStringsToChars(info.SVMlightpath));
 % train SVM - warning is turned off since toolbox outputs some "errors"
 % which are not important
 warning off

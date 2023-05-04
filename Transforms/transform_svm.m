@@ -35,7 +35,7 @@ function [score,aucPU] = transform_svm(X,s,varargin)
     addOptional(args,'parameter',2);
     addOptional(args,'kfoldvalue', 10);
     addOptional(args,'applyPlattCorrection',true)
-    addOptional(args,'SVMlightpath','~/Documents/research/software/svm_light');
+    addOptional(args,'SVMlightpath',fullfile(stdlib.expanduser("~"),"Documents","svm_light"));
     addOptional(args,'do_normalize',1);
     addOptional(args,'pos_weight',1);
     parse(args,varargin{:});
