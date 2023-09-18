@@ -9,9 +9,9 @@ function [alphaHat, out] = runAlphaMax(x,x1,varargin)
 %    the inflection script (AlphaMax) to estimate the class prior from the ll curve
 %
 %   See the files noted below for details on the other optional arguments
-addpath(fullfile(fileparts(mfilename('fullpath')),"../Transforms"));
-addpath(fullfile(fileparts(mfilename('fullpath')),"estimators/"));
-addpath(fullfile(fileparts(mfilename('fullpath')),"Algorithms/"));
+addpath(fullfile(fileparts(mfilename('fullpath')),'../Transforms'));
+addpath(fullfile(fileparts(mfilename('fullpath')),'estimators/'));
+addpath(fullfile(fileparts(mfilename('fullpath')),'Algorithms/'));
 args = inputParser;
 %% Transform Arguments
 % applyTransform.m argument

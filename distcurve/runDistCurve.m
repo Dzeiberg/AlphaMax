@@ -6,9 +6,9 @@ function [alphaHat, curve, aucPU] = runDistCurve(x,x1,varargin)
 %
 % Optional Arguments:
 %   See the files noted below for details on the optional arguments
-addpath(fullfile(fileparts(mfilename('fullpath')),"../Transforms"));
-addpath(fullfile(fileparts(mfilename('fullpath')),"../Transforms/utilities"));
-addpath(fullfile(fileparts(mfilename('fullpath')),"estimator/"));
+addpath(fullfile(fileparts(mfilename('fullpath')),'../Transforms'));
+addpath(fullfile(fileparts(mfilename('fullpath')),'../Transforms/utilities'));
+addpath(fullfile(fileparts(mfilename('fullpath')),'estimator/'));
 args = inputParser;
 %% Transform Arguments
 % applyTransform.m argument
